@@ -11,8 +11,6 @@ import { AiOutlineClose, AiOutlineSearch } from 'react-icons/ai';
 import { MobileNav } from "./MobileNav";
 import { Menu, MenuItem } from '@mui/material';
 import { useOurContext } from "@/context/walletContext";
-import { useUser } from '@/firebase/auth/useUser';
-import { getUserDetailsFromCookie } from "@/firebase/auth/userCookie";
 import { LanguageSelectDropDown } from "./DropDown";
 import { useTranslation } from '../utils/common';
 import { searchHash } from "@/pages/common/worker";

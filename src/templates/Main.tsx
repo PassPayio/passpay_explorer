@@ -7,9 +7,6 @@ import type { ReactNode } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
 import Footer from '@/components/Footer';
-// import HomeChangeLanguageComponent from '@/components/home_language';
-// import HomeOutlinkComponent from '@/components/home_outlink';
-// import MobileNav from '@/components/MobileNav';
 import SectionContainer from '@/components/SectionContainer';
 import Header from '@/components/Header';
 import CookieBanner from '@/components/CookieBanner';
@@ -17,7 +14,7 @@ import CookieBanner from '@/components/CookieBanner';
 type IMainProps = {
   meta: ReactNode;
   children: ReactNode;
-  loading: boolean;
+  loading?: boolean;
 };
 
 const Main = (props: IMainProps) => {
@@ -35,32 +32,36 @@ const Main = (props: IMainProps) => {
   };
 
   const onScroll = useCallback(() => {
-    console.log("xxx")
-    if (scrollY > window.scrollY) {
+    const sy = document.getElementById("main")?.scrollTop;
+    const y = Number(sy);
+    if (scrollY > y) {
       setShowHeader(true);
-    } else if (scrollY < window.scrollY) {
+    } else if (scrollY < y) {
       setShowHeader(false);
     }
-    setScrollY(window.scrollY);
+
+    if(y===0)
+      setShowHeader(true)
+    setScrollY(y);
   }, [scrollY]);
 
   useEffect(() => {
     // add eventlistener to window
-    console.log("xxxx")
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, true);
+    // document.getElementById("main")?.addEventListener('scroll', onScroll, true);
     return () => {
       window.removeEventListener('scroll', onScroll);
-    console.log("yyy")
-
+      // document.getElementById('main')?.removeEventListener('scroll', onScroll);
     };
-  }, [onScroll]);
+
+  }, []);
 
   return (
     <SectionContainer>
       {props.meta}
-      <div className="flex h-screen flex-col justify-between bg-white overflow-x-hidden">
+      <div className={`flex h-screen flex-col justify-between bg-white overflow-x-hidden ${props.loading?'overflow-y-hidden':'overflow-y-visible'}`} id='main'>
         <header
-          className={`fixed top-0 left-0 z-10 w-full duration-500
+          className={`fixed top-0 left-0 z-50 w-full duration-500 h-fit
         ${bShowHeader ? 'translate-y-0' : '-translate-y-full'}`}
         >
           <Header/>
@@ -71,11 +72,11 @@ const Main = (props: IMainProps) => {
           exit={`exit`}
           variants={variants}
           transition={{ type: 'linear' }}
-          className="content mb-auto text-xl mt-[98px] relative"
+          className="content mb-auto text-xl mt-[98px] relative overflow-y-visible"
         >
           {props.children}
-          <div className={`${props.loading? 'visible': 'invisible'} absolute z-50 top-0
-              w-full h-[calc(100vh-202px)] flex flex-col items-center justify-center bg-black/20`}>
+          <div className={`${props.loading? 'visible': 'invisible'} z-50 top-0 fixed
+              w-full h-screen flex flex-col items-center justify-center bg-black/20`}>
               <div className="mx-10 flex h-[200px] w-[300px] flex-col items-center justify-center rounded-3xl bg-black/20 px-4">
                   <div className="loading-spinner "></div>
                   <span className="pt-[20px] text-[24px] text-white">

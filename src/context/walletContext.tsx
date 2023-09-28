@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import cookies from 'js-cookie';
-import { getUserDetailsFromCookie, setUserDetailsCookie } from '../firebase/auth/userCookie';
 
 export interface UserDetails {
     availablePoint: 0;
@@ -25,14 +24,9 @@ const WalletProvider = ({children}: WalletProviderProps)=>{
     const [userDetails, setUserDetail] = useState<UserDetails>();
 
     const loadDataFromCookie = () => {
-        const userDetails = getUserDetailsFromCookie();
-        setUserDetail(userDetails);
     }
 
     const saveUserDetails = (userDetails: UserDetails)=>{
-        console.log("wallet context save      ", userDetails)
-        setUserDetail(userDetails);
-        setUserDetailsCookie(userDetails);
     }
 
     useEffect(()=>{

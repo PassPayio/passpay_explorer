@@ -6,13 +6,17 @@ import { useEffect, useState } from 'react';
 import WalletProvider from '@/context/walletContext';
 // import { ThemeProvider } from '@emotion/react';
 import {ThemeProvider, useTheme} from 'next-themes';
+import dynamic from 'next/dynamic';
+
+
+
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
     const [ready, setReady] = useState(false);
     const { systemTheme, theme, setTheme } = useTheme();
     useEffect(() => {
       setReady(true);
     }, []);
-
+    
     return (
       <>
         {ready? (

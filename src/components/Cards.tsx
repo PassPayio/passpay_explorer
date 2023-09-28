@@ -2,324 +2,114 @@ import { useRouter } from "next/router";
 import {AiFillCheckCircle} from "react-icons/ai";
 import { UserDetails } from '../context/walletContext';
 import { BlueButton } from "./ButtonComponents";
-import { PlanSwiper } from "./UserCenterComponents";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from "@/utils/common";
 import { getTimeSpan } from '../lib/timespan';
-export const PlanCard_Normal = () => {
-    const router = useRouter();
-    const {t} = useTranslation('common');
+import { getTokensFromAddress } from "@/pages/common/worker";
+
+export const TokenTransferAccordian = ({TokenTransferData}: {TokenTransferData : Map<string, Array<any>>}) =>{
+    if (!TokenTransferData) return (<></>);
+    const keys = ["ERC20", "ERC721", "ERC1155"];
     return (
-        <div className="flex flex-col w-full max-w-[640px] min-w-[240px] h-[480px] md:h-[720px] rounded-lg border-2 bg-[#1676FE] justify-center items-center">
-            <div className="flex flex-col items-center justify-start w-full h-full px-[5%] gap-6 py-10">
-                <h3 className="text-[24px] md:text-[42px] font-bold text-white py-[10px] md:py-[40px] leading-normal">{t('standard')}</h3>
-                <div className="flex flex-row items-end justify-center h-[50px] md:h-[100px] leading-tight">
-                    <span className="text-[28px] md:text-[56px] font-bold text-white pb-3 lg:pb-0">{`￥ 300 /`}</span>
-                    <span className="text-[16px] md:text-[24px] font-bold text-white pb-3">{t('month')}</span>
-                </div>
-                <div className="text-[18px] md:text-[24px] pt-[20px] font-bold text-white flex flex-row gap-2 items-center">
-                    <AiFillCheckCircle />
-                    {t('plan_card_std_des1')}
-                </div>
-                <div className="text-[18px] md:text-[24px] font-bold text-white flex flex-row gap-1 md:gap-2 items-start">
-                    <AiFillCheckCircle className="min-w-[22px] mt-1" />
-                    {t('plan_card_std_des2')}
-                </div>
-            </div>
-            <button
-                name={'Subscribe_normal'}
-                type={'button'}
-                className={`inline-flex w-[70%] h-[70px] md:h-[104px]  items-center rounded-md bg-white
-                        text-center text-[32px] font-bold text-blue-500 justify-center
-                        hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-cyan-400 
-                        disabled:bg-gray-500 mb-[60px]`}
-            >   
-                {t('subscribe')}
-            </button>
+        <div className="w-full flex flex-col gap-2">
+        {
+            keys.map((key: string, index: number)=>{
+                if(!TokenTransferData.has(key)) return <></>;
+                const value = TokenTransferData.get(key);
+                return (
+                    <div id={`accordian${key}-${value?.length}-${value?.at(0)?.contract!}`} key={index}>
+                        <div key={`a${index}`}
+                            className="border border-neutral-200 bg-white dark:border-neutral-600 dark:bg-neutral-800">
+                            <h2 className="mb-0" id={`heading${key}-${value?.length}-${value?.at(0)?.contract!}`} key={`f${index}`}>
+                            <button
+                                key={`e${index}`}
+                                className="group relative flex w-full items-center border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-neutral-800 dark:text-white [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-primary [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-neutral-800 dark:[&:not([data-te-collapse-collapsed])]:text-primary-400 dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)] [&[data-te-collapse-collapsed]]:rounded-b-[15px] [&[data-te-collapse-collapsed]]:transition-none"
+                                type="button"
+                                data-te-collapse-init
+                                data-te-collapse-collapsed
+                                data-te-target={`#collapse${key}-${value?.length}-${value?.at(0)?.contract!}`}
+                                aria-expanded="false"
+                                aria-controls={`collapse${key}-${value?.length}-${value?.at(0)?.contract!}`}>
+                                <div className="flex flex-row gap-4" key={`d${index}`}>
+                                    <span>{`${key} Transfers`}</span>
+                                    <span className="text-blue-400">{value?.length}</span>
+                                </div>
+                                <span 
+                                    key={`g${index}`}
+                                    className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth="1.5"
+                                        stroke="currentColor"
+                                        className="h-6 w-6">
+                                        <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                                    </svg>
+                                </span>
+                            </button>
+                            </h2>
+                            <div
+                                key={`b${index}`}
+                                id={`collapse${key}-${value?.length}-${value?.at(0)?.contract!}`}
+                                className="!visible hidden"
+                                data-te-collapse-item
+                                aria-labelledby={`heading${key}-${value?.length}-${value?.at(0)?.contract!}`}
+                                data-te-parent={`#accordian${key}-${value?.length}-${value?.at(0)?.contract!}`}>
+                                <div className="px-5 py-4" key={`q${index}`}>
+                                {
+                                    value?.map((tokenItem: any, idx: number) => {
+                                        return (
+                                            <div key={`${idx}${tokenItem.from}`} className="flex flex-col w-full border-b">
+                                                <div className="flex flex-row w-full" key={`c${index}`}>
+                                                    <a href={`/address/${tokenItem.from}`} className="min-w-[100px] w-[40%]">
+                                                        <p className="text-[14px] text-blue-600 text-ellipsis overflow-hidden">
+                                                            {tokenItem.from}
+                                                        </p>
+                                                    </a>
+                                                    <div className="flex w-[50px] h-[28px] justify-center items-center">
+                                                    <svg className="fill-current opacity-75 w-4 h-4 -mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+                                                    </div>
+                                                    <a href={`/address/${tokenItem.to}`} className="min-w-[100px] w-[40%]">
+                                                        <p className="text-[14px] text-blue-600 text-ellipsis overflow-hidden">
+                                                            {tokenItem.to}
+                                                        </p>
+                                                    </a>
+                                                    <div className="w-[20%] flex text-[12px] justify-end">
+                                                        {
+                                                            key==='ERC20'?`${(tokenItem.value*1.0/Math.pow(10,Number(tokenItem.decimals))).toFixed(Number(tokenItem.decimals))} ${tokenItem.symbol}`
+                                                        :
+                                                            `ID ${tokenItem.value} ${tokenItem.symbol}`
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            })
+        }
+        
         </div>
     );
 }
 
-export const PlanCard_Vip = () => {
-    const router = useRouter();
-    const {t} = useTranslation('common');
-    return (
-        <div className="flex flex-col w-full max-w-[640px]  min-w-[240px] h-[480px] md:h-[720px] rounded-lg border-2 bg-[#FF6384] justify-center items-center">
-            <div className="flex flex-col items-center justify-start w-full h-full px-[5%] gap-4 md:gap-6 py-10">
-                <h3 className="text-[24px] md:text-[42px] font-bold text-white py-[10px] md:py-[40px] leading-normal">{`VIP`}</h3>
-                <div className="flex flex-row items-end justify-center h-[50px] md:h-[100px] leading-tight">
-                    <span className="text-[28px] md:text-[56px] font-bold text-white pb-3 lg:pb-0">{`￥ 1200 /`}</span>
-                    <span className="text-[16px] md:text-[24px] font-bold text-white pb-3">{t('month')}</span>
-                </div>
-                <div className="text-[18px] md:text-[24px] pt-[5px] md:pt-[20px] font-bold text-white flex flex-row gap-2 items-center">
-                    <AiFillCheckCircle />
-                    {t('plan_card_vip_des1')}
-                </div>
-                <div className="text-[18px] md:text-[24px] font-bold text-white flex flex-row gap-1 md:gap-2 items-start">
-                    <AiFillCheckCircle className="min-w-[22px] mt-1" />
-                    <span>{t('plan_card_vip_des2')}</span>
-                </div>
-            </div>
-            <button
-                name={'Subscribe_normal'}
-                type={'button'}
-                className={`inline-flex w-[70%] h-[70px] md:h-[104px]  items-center rounded-md bg-white
-                        text-center text-[32px] font-bold text-red-500 justify-center
-                        hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-cyan-400 
-                        disabled:bg-gray-500 mb-[60px]`}
-            >   
-                {t('subscribe')}
-            </button>
-        </div>
-    );
-}
-
-export const UCInfoCard = (
-    {email, plan, availablePoint, expirePoint, expireDate } : 
-    {
-        email: string, 
-        plan: string,
-        availablePoint: string, 
-        expirePoint: string, 
-        expireDate: string,
-    }
-    ) => {
-    const router = useRouter();
-    return (
-        <>
-        <div className="hidden sm:flex flex-col w-full h-[360px] bg-white rounded-md shadow-lg">
-            <div className="flex flex-row border-b h-[70px]">
-                <div className="flex flex-col items-start justify-center pl-10">
-                    <span className="text-[16px] font-medium text-black">{email?.split('@').at(0)}</span>
-                    <span className="text-[14px] font-normal text-gray-400">{email}</span>
-                </div>
-            </div>
-            <div className="flex flex-row w-full h-full">
-                <div className="flex flex-col w-[50%] h-full items-end justify-center pr-8">
-                    <div className="w-[180px] h-[180px] m-1 mr-2 relative flex justify-center items-center 
-                        rounded-md bg-blue-500 text-[96px] text-white uppercase">
-                        {email?.charAt(0)}
-                    </div>
-                </div>
-                <div className="flex flex-col w-[50%] items-start justify-center pl-8">
-                    <div className="flex flex-row gap-8">
-                        <span className="font-normal text-[14px] text-black">{email}</span>
-                        <div className={`${plan==='Standard'?'bg-[#F7CB47]':'bg-blue-600'}
-                            font-bold text-[9px] text-white text-center rounded-md items-center justify-center flex px-4
-                        `}>
-                            {plan}
-                        </div>
-                    </div>
-                    <div className="flex flex-row pt-8">
-                        <div className="flex flex-col px-4">
-                            <span className="text-center font-bold text-black text-[16px]">
-                                {availablePoint}
-                            </span>
-                            <span className="text-center font-normal text-[#2C2C2C] text-[12px]">
-                                {'Available (pt)'}
-                            </span>
-                        </div>
-                        <div className="flex flex-col px-4 border-l">
-                            <span className="text-center font-bold text-black text-[16px]">
-                                {expirePoint}
-                            </span>
-                            <span className="text-center font-normal text-[#2C2C2C] text-[12px]">
-                                {'expiring soon (pt)'}
-                            </span>
-                            <span className="text-center font-normal text-[#2C2C2C] text-[12px]">
-                                {expireDate?.substring(0, 10)}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-        <div className="flex sm:hidden flex-col w-full max-w-[540px] min-w-[300px]">
-            <div className="flex flex-row justify-between gap-8">
-                <span className="font-normal text-[16px] text-black">{email}</span>
-                <div className={`${plan==='Standard'?'bg-[#F7CB47]':'bg-blue-600'}
-                    font-bold text-[9px] text-white text-center rounded-md items-center justify-center flex px-4
-                `}>
-                    {plan}
-                </div>
-            </div>
-            <div className="flex w-full items-center justify-center bg-[#1676FE] rounded-xl shadow-lg mt-8">
-                <div className="flex flex-row py-8">
-                    <div className="flex flex-col px-6">
-                        <span className="text-center font-bold text-white text-[32px]">
-                            {availablePoint}
-                        </span>
-                        <span className="text-center font-normal text-white text-[12px]">
-                            {'Available (pt)'}
-                        </span>
-                    </div>
-                    <div className="flex flex-col px-6 border-l">
-                        <span className="text-center font-bold text-white text-[32px]">
-                            {expirePoint}
-                        </span>
-                        <span className="text-center font-normal text-white text-[12px]">
-                            {'expiring soon (pt)'}
-                        </span>
-                        <span className="text-center font-normal text-white text-[12px]">
-                            {expireDate?.substring(0, 10)}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </>
-    )
-}
-
-export const UCPlanCard = (
-    
-    {meinfo, plan, unsubscribeFinishCallback } : 
-    {
-        meinfo: UserDetails | null
-        plan: string
-        unsubscribeFinishCallback?: any
-    }
-    ) => {
-    const router = useRouter();
-    const {t} = useTranslation('common');
-    const [unsubscribeClicked, setUnsubscribeClicked] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [unsubscribeProcess, setUnsubscribeProcess] = useState(false);
-
-    const sleep = (delay: any) => new Promise((resolve) => setTimeout(resolve, delay))
-    const ddd = async()=>{
-        await sleep(1000);
-    }
-    const unsubscribeSureHandler = () => {
-        setUnsubscribeProcess(true);
-        setLoading(true);
-        ddd().then(()=>{
-            setLoading(false);
-            unsubscribeFinishCallback?.();
-        })
-    }
-    return (
-        <div className="flex flex-col relative min-w-[300px] lg:min-w-[500px] max-w-[540px] w-full h-[420px] bg-white rounded-md shadow-lg">
-            <div className="flex flex-row border-b h-[70px]">
-                <div className="flex flex-col items-start justify-center pl-10">
-                    <span className="text-[16px] font-medium text-black">{t('my_plan')}</span>
-                    <span className="text-[14px] font-normal text-gray-400">{meinfo?.email}</span>
-                </div>
-                <div className={`${meinfo?.is_paying?'visible':'invisible'} w-full h-full items-center justify-end flex pr-10`}>
-                    <BlueButton 
-                        name={t('unsubscribe')}
-                        type={"button"}
-                        classname={"h-[30px] px-4 font-medium"}
-                        clickhandler={()=>{setUnsubscribeClicked(true)}}
-                    />
-                </div>
-            </div>
-            <div className="flex flex-row w-full h-full px-[3%] py-[3%] mt-1">
-                <PlanSwiper meinfo={meinfo!} plan={plan}/>
-            </div>
-            <div className={`${unsubscribeClicked?'flex': 'hidden'} absolute w-full h-full flex flex-col rounded-md z-40 bg-black/90 items-center justify-between`}>
-                {!unsubscribeProcess?(
-                <>
-                <div className="flex flex-col w-fit pt-16 px-[5%]">
-                    <span className="text-white text-[24px] border-b border-gray-200 px-4 pb-2">
-                        {t('unsubscribe_des1')}
-                    </span>
-                    <span className="text-white/90 text-[16px] px-4 pt-2">
-                        {t('unsubscribe_des2')}
-                    </span>
-                </div>
-                <div className="flex flex-row w-full justify-center gap-2 px-12 mb-10">
-                    <button
-                        name={'cancel'}
-                        type={'button'}
-                        className={`inline-flex w-[70%] h-[40px] items-center rounded-md bg-yellow-500
-                                text-center text-[18px] font-normal text-white justify-center
-                                hover:bg-yellow-900 focus:outline-none 
-                                disabled:bg-gray-500 mb-[30px]`}
-                        onClick={()=>{setUnsubscribeClicked(false);}}
-                    >   
-                        {t('cancel')}
-                    </button>
-                    <button
-                        name={'ok'}
-                        type={'button'}
-                        className={`inline-flex w-[70%] h-[40px] items-center rounded-md bg-red-400
-                                text-center text-[18px] font-normal text-white justify-center
-                                hover:bg-red-900 focus:outline-none 
-                                disabled:bg-gray-500 mb-[30px]`}
-                        onClick={unsubscribeSureHandler}
-                    >   
-                        {t('sure')}
-                    </button>
-                </div>
-                </>
-                ):(<>
-                {loading?(
-                <>
-                    <div className="flex flex-col items-center justify-center h-[420px]">
-                        <div className="loading-spinner "></div>
-                        <span className="pt-[20px] text-[24px] text-white">
-                            Processing...
-                        </span>
-                    </div>
-                </>):(
-                <>
-                    <div className="flex flex-col w-fit pt-16 px-[5%]">
-                        <span className="text-white text-[24px] border-b border-gray-200 px-4 pb-2">
-                            {t('unsubscribe_des1')}
-                        </span>
-                        <span className="text-white/90 text-[16px] px-4 pt-2">
-                            {t('unsubscribe_des2')}
-                        </span>
-                    </div>
-                    <div className="flex flex-row w-full justify-center gap-2 px-12 mb-10">
-                        <button
-                            name={'ok'}
-                            type={'button'}
-                            className={`inline-flex w-[70%] h-[40px] items-center rounded-md bg-blue-400
-                                    text-center text-[18px] font-normal text-white justify-center
-                                    hover:bg-blue-900 focus:outline-none 
-                                    disabled:bg-gray-500 mb-[30px]`}
-                            onClick = {()=>{
-                                setUnsubscribeClicked(false);
-                                setUnsubscribeProcess(false);
-                            }}
-                        >   
-                            {t('ok')}
-                        </button>
-                    </div>
-                </>
-                )}
-                </>)}
-
-            </div>
-        </div>
-    )
-}
-
-export const UCHistoryCard = (
-    
-    ) => {
-    const router = useRouter();
-    const {t} = useTranslation('common');
-    return (
-        <div className="flex flex-col min-h-[300px] min-w-[300px] lg:min-w-[500px] max-w-[540px] w-full h-[420px] bg-white rounded-md shadow-lg">
-            <div className="flex flex-row border-b h-[70px]">
-                <div className="flex flex-col items-start justify-center pl-10">
-                    <span className="text-[16px] font-medium text-black">{t('payment_history')}</span>
-                    <span className="text-[14px] font-normal text-gray-400">{t('payment_history_des')}</span>
-                </div>
-            </div>
-            <div className="flex flex-row w-full h-full">
-                
-            </div>
-            
-        </div>
-    )
-}
-
-export const TransactionCard = ({TxData}:{TxData:any}) => {
+export const TransactionCard = ({TxData, TokenTransfers}:{TxData:any, TokenTransfers:any}) => {
+    useEffect(() => {
+        const init = async () => {
+          const { Collapse, initTE } = await import("tw-elements");
+          initTE({ Collapse });
+        };
+        init();
+    }, []);
     const bFailed = TxData.ethereumSpecific?.status === 0;
     return (
         <div className="flex flex-col w-full h-full bg-white px-[3%] py-4">
@@ -394,31 +184,7 @@ export const TransactionCard = ({TxData}:{TxData:any}) => {
                 </div>
             </div>
             <div className="flex flex-col w-full pb-2">
-                {TxData.tokenTransfers?.map((data: any, index:number)=>{
-                    return (
-                        <div key={index} className="flex flex-col w-full">
-                            <p>{`${data.type} Transfer`}</p>
-                            <div className="flex flex-row w-full">
-                                <a href={`/address/${data.from}`} className="min-w-[100px] w-[40%]">
-                                    <p className="text-[14px] text-blue-600 text-ellipsis overflow-hidden">
-                                        {data.from}
-                                    </p>
-                                </a>
-                                <div className="flex w-[50px] h-[28px] justify-center items-center">
-                                 <svg className="fill-current opacity-75 w-4 h-4 -mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
-                                </div>
-                                <a href={`/address/${data.to}`} className="min-w-[100px] w-[40%]">
-                                    <p className="text-[14px] text-blue-600 text-ellipsis overflow-hidden">
-                                        {data.to}
-                                    </p>
-                                </a>
-                                <div className="w-[20%] flex text-[12px] justify-end">
-                                    {(data.value*1.0/Math.pow(10,Number(data.decimals))).toFixed(Number(data.decimals))} {data.symbol}
-                                </div>
-                            </div>
-                        </div>
-                    )
-                })}
+                <TokenTransferAccordian TokenTransferData={TokenTransfers} />
             </div>
             <div className="flex flex-row w-full pt-4">
                 <div className="flex flex-row">
@@ -435,33 +201,363 @@ export const TransactionCard = ({TxData}:{TxData:any}) => {
     )
 }
 
-function syntaxHighlight(json: any) {
-    if (typeof json != 'string') {
-         json = JSON.stringify(json, undefined, 2);
-    }
-    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'number';
-        if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-                cls = 'key';
-            } else {
-                cls = 'string';
-            }
-        } else if (/true|false/.test(match)) {
-            cls = 'boolean';
-        } else if (/null/.test(match)) {
-            cls = 'null';
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
-    });
-}
+
 export const RawTransactionCard = ({TxData}: {TxData: any}) => {
     return (
         <div className="flex w-full bg-[#002b31] text-[14px] text-white px-4 py-4 leading-tight overflow-hidden truncate">
             <pre className="">
                 { JSON.stringify(TxData, null, 2) }
             </pre>
+        </div>
+    )
+}
+
+
+export const ERC20_Accordion = ({TokenData}: {TokenData : Map<string, Array<any>>}) =>{
+    if (!TokenData) return (<></>);
+    if (!TokenData.has('ERC20')) return (<></>);
+    const tokenArray = TokenData.get('ERC20');
+    return (
+        <div id="accordion_erc20">
+            <div
+                className="border border-neutral-200 bg-white dark:border-neutral-600 dark:bg-neutral-800">
+                <h2 className="mb-0" id="headingOne">
+                <button
+                    className="group relative flex w-full items-center border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-neutral-800 dark:text-white [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-primary [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-neutral-800 dark:[&:not([data-te-collapse-collapsed])]:text-primary-400 dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)] [&[data-te-collapse-collapsed]]:rounded-b-[15px] [&[data-te-collapse-collapsed]]:transition-none"
+                    type="button"
+                    data-te-collapse-init
+                    data-te-collapse-collapsed
+                    data-te-target="#collapseOne"
+                    aria-expanded="false"
+                    aria-controls="collapseOne">
+                    <div className="flex flex-row gap-4">
+                        <span>ERC20 Tokens</span>
+                        <span className="text-blue-400">{tokenArray?.length}</span>
+                    </div>
+                    <span
+                        className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="h-6 w-6">
+                            <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </span>
+                </button>
+                </h2>
+                <div
+                id="collapseOne"
+                className="!visible hidden"
+                data-te-collapse-item
+                aria-labelledby="headingOne"
+                data-te-parent="#accordion_erc20">
+                <div className="px-5 py-4">
+                    <table className="text-[14px] w-full table-fixed">
+                        <tbody>
+                            <tr className="text-gray-600 h-[40px]">
+                                <th className="w-[25%] text-start">Contract</th>
+                                <th className="w-[30%]">Quantity</th>
+                                <th className="w-[35%]">Value</th>
+                                <th className="text-end">Transfers</th>
+                            </tr>
+                            {
+                                tokenArray?.map((tokenItem: any, idx: number) => {
+                                    return (
+                                        <tr className="border-t h-[35px]" key={idx}>
+                                            <td className="text-ellipsis overflow-hidden whitespace-nowrap">
+                                                <a href={`/address/${tokenItem?.contract}`} className="text-blue-500">
+                                                    {tokenItem?.name?tokenItem.name:tokenItem?.contract}
+                                                </a>
+                                            </td>
+                                            <td className="">{(Number(tokenItem?.balance)/Math.pow(10,Number(tokenItem?.decimals?tokenItem?.decimals:1)))}{' '}{tokenItem?.symbol}</td>
+                                            <td className="text-center">{"-"}</td>
+                                            <td className="text-end">{tokenItem?.transfers}</td>
+                                        </tr>
+                                    );
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export const ERC721_Accordion = ({TokenData}: {TokenData : Map<string, Array<any>>}) =>{
+    if (!TokenData) return (<></>);
+    if (!TokenData.has('ERC721')) return (<></>);
+    const tokenArray = TokenData.get('ERC721');
+    
+    return (
+        <div id="accordion_erc721">
+            <div
+                className="border border-neutral-200 bg-white dark:border-neutral-600 dark:bg-neutral-800">
+                <h2 className="mb-0" id="heading721">
+                <button
+                    className="group relative flex w-full items-center border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-neutral-800 dark:text-white [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-primary [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-neutral-800 dark:[&:not([data-te-collapse-collapsed])]:text-primary-400 dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)] [&[data-te-collapse-collapsed]]:rounded-b-[15px] [&[data-te-collapse-collapsed]]:transition-none"
+                    type="button"
+                    data-te-collapse-init
+                    data-te-collapse-collapsed
+                    data-te-target="#collapseTwo"
+                    aria-expanded="false"
+                    aria-controls="collapseTwo">
+                    <div className="flex flex-row gap-4">
+                        <span>ERC721 Tokens</span>
+                        <span className="text-blue-400">{tokenArray?.length}</span>
+                    </div>
+                    <span
+                        className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="h-6 w-6">
+                            <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </span>
+                </button>
+                </h2>
+                <div
+                id="collapseTwo"
+                className="!visible hidden"
+                data-te-collapse-item
+                aria-labelledby="heading721"
+                data-te-parent="#accordion_erc721">
+                <div className="px-5 py-4">
+                    <table className="text-[14px] w-full table-fixed">
+                        <tbody>
+                            <tr className="text-gray-600 h-[40px]">
+                                <th className="w-[25%] text-start">Contract</th>
+                                <th className="w-[65%]">Tokens</th>
+                                <th className="text-end">Transfers</th>
+                            </tr>
+                            {
+                                tokenArray?.map((tokenItem: any, idx: number) => {
+                                    return (
+                                        <tr className="border-t h-[35px]" key={idx}>
+                                            <td className="text-ellipsis overflow-hidden whitespace-nowrap">
+                                                <a href={`/address/${tokenItem?.contract}`} className="text-blue-500">
+                                                    {tokenItem?.name?tokenItem.name:tokenItem?.contract}
+                                                </a>
+                                            </td>
+                                            <td className="">
+
+                                                {
+                                                    tokenItem.ids?.map((tokenid: any, idx: number)=>{
+                                                        return (
+                                                            <span key={idx}>{idx>0?", ": ""}{tokenid}</span>
+                                                        )
+                                                    })
+                                                }
+                                            </td>
+                                            <td className="text-end">{tokenItem?.transfers}</td>
+                                        </tr>
+                                    );
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export const ERC1155_Accordion = ({TokenData}: {TokenData : Map<string, Array<any>>}) =>{
+    if (!TokenData) return (<></>);
+    if (!TokenData.has('ERC1155')) return (<></>);
+    const tokenArray = TokenData.get('ERC1155');
+    
+    return (
+        <div id="accordion_erc1155">
+            <div
+                className="border border-neutral-200 bg-white dark:border-neutral-600 dark:bg-neutral-800">
+                <h2 className="mb-0" id="heading1155">
+                <button
+                    className="group relative flex w-full items-center border-0 bg-white px-5 py-4 text-left text-base text-neutral-800 transition [overflow-anchor:none] hover:z-[2] focus:z-[3] focus:outline-none dark:bg-neutral-800 dark:text-white [&:not([data-te-collapse-collapsed])]:bg-white [&:not([data-te-collapse-collapsed])]:text-primary [&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(229,231,235)] dark:[&:not([data-te-collapse-collapsed])]:bg-neutral-800 dark:[&:not([data-te-collapse-collapsed])]:text-primary-400 dark:[&:not([data-te-collapse-collapsed])]:[box-shadow:inset_0_-1px_0_rgba(75,85,99)] [&[data-te-collapse-collapsed]]:rounded-b-[15px] [&[data-te-collapse-collapsed]]:transition-none"
+                    type="button"
+                    data-te-collapse-init
+                    data-te-collapse-collapsed
+                    data-te-target="#collapse1155"
+                    aria-expanded="false"
+                    aria-controls="collapse1155">
+                    <div className="flex flex-row gap-4">
+                        <span>ERC1155 Tokens</span>
+                        <span className="text-blue-400">{tokenArray?.length}</span>
+                    </div>
+                    <span
+                        className="-mr-1 ml-auto h-5 w-5 shrink-0 rotate-[-180deg] fill-[#336dec] transition-transform duration-200 ease-in-out group-[[data-te-collapse-collapsed]]:mr-0 group-[[data-te-collapse-collapsed]]:rotate-0 group-[[data-te-collapse-collapsed]]:fill-[#212529] motion-reduce:transition-none dark:fill-blue-300 dark:group-[[data-te-collapse-collapsed]]:fill-white">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="h-6 w-6">
+                            <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </span>
+                </button>
+                </h2>
+                <div
+                    id="collapse1155"
+                    className="!visible hidden"
+                    data-te-collapse-item
+                    aria-labelledby="heading1155"
+                    data-te-parent="#accordion_erc1155">
+                    <div className="px-5 py-4">
+                        <table className="text-[14px] w-full table-fixed">
+                            <tbody>
+                                <tr className="text-gray-600 h-[40px]">
+                                    <th className="w-[25%] text-start">Contract</th>
+                                    <th className="w-[65%]">Tokens</th>
+                                    <th className="text-end">Transfers</th>
+                                </tr>
+                                {
+                                    tokenArray?.map((tokenItem: any, idx: number) => {
+                                        return (
+                                            <tr className="border-t h-[35px]" key={"111"+idx}>
+                                                <td className="text-ellipsis overflow-hidden whitespace-nowrap">
+                                                    <a href={`/address/${tokenItem?.contract}`} className="text-blue-500">
+                                                        {tokenItem?.name?tokenItem.name:tokenItem?.contract}
+                                                    </a>
+                                                </td>
+                                                <td className="">
+
+                                                    {
+                                                        tokenItem.multiTokenValues?.map((tokenid: any, idx: number)=>{
+                                                            return (
+                                                                <span key={idx}>{idx>0?", ": ""}{tokenid.value}{' '}{tokenItem.symbol} {' of ID '}{tokenid.id}</span>
+                                                            )
+                                                        })
+                                                    }
+                                                </td>
+                                                <td className="text-end">{tokenItem?.transfers}</td>
+                                            </tr>
+                                        );
+                                    })
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export const AddressCard = ({AddrData}: {AddrData: any}) => {
+    useEffect(() => {
+        const init = async () => {
+          const { Collapse, initTE } = await import("tw-elements");
+          initTE({ Collapse });
+        };
+        init();
+    }, []);
+    const tokenData = getTokensFromAddress(AddrData);
+    console.log("tokens", tokenData)
+    return (
+        <div className="flex flex-col w-full h-full py-2 gap-2">
+            <div className="flex flex-col w-full px-[3%] bg-white py-2">
+                <table className="text-[14px]">
+                    <tbody>
+                        <tr className="border-b h-[40px]">
+                            <td className="w-[25%] font-bold text-[20px]">Confirmed</td>
+                            <td></td>
+                        </tr>
+                        <tr className="border-b h-[40px]">
+                            <td>Balance</td>
+                            <td>{`${(Number(AddrData.balance!)/Math.pow(10,18)).toFixed(18)} ETH`}</td>
+                        </tr>
+                        <tr className="border-b h-[40px]">
+                            <td>Transactions</td>
+                            <td>{`${AddrData.txs!|0}`}</td>
+                        </tr>
+                        <tr className="border-b h-[40px]">
+                            <td>Non-contract Transactions</td>
+                            <td>{`${AddrData.nonTokenTxs!|0}`}</td>
+                        </tr>
+                        <tr className="border-b h-[40px]">
+                            <td>Internal Transactions</td>
+                            <td>{`${AddrData.internalTxs!|0}`}</td>
+                        </tr>
+                        <tr className="border-b h-[40px]">
+                            <td>Nonce</td>
+                            <td>{`${AddrData.nonce!|0}`}</td>
+                        </tr>
+                        {
+                            AddrData.contractInfo?
+                                (<>
+                                    {AddrData.contractInfo.type? 
+                        <tr className="border-b h-[40px]">
+                            <td>Contract type</td>
+                            <td>{`${AddrData.contractInfo.type!}`}</td>
+                        </tr>
+                                    : <></>}    
+                                    {AddrData.contractInfo.createdInBlock? 
+                        <tr className="border-b h-[40px]">
+                            <td>Created in Block</td>
+                            <td>{`${AddrData.contractInfo.createdInBlock!}`}</td>
+                        </tr>
+                                    : <></>}
+                                    {AddrData.contractInfo.destructedInBlock? 
+                        <tr className="border-b h-[40px]">
+                            <td>Destructed in Block</td>
+                            <td>{`${AddrData.contractInfo.destructedInBlock!}`}</td>
+                        </tr>
+                                    : <></>}
+                                </>
+                                )
+                            :   <></>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            {
+            AddrData.unconfirmedTxs?
+            <div className="flex flex-col w-full px-[3%] bg-white py-2">
+                <table className="text-[14px]">
+                    <tbody>
+                        <tr className="border-b h-[40px]">
+                            <td className="w-[25%] font-bold text-[20px]">Unconfirmed</td>
+                            <td></td>
+                        </tr>
+                        <tr className="border-b h-[40px]">
+                            <td>Unconfirmed Balance</td>
+                            <td>{`${(Number(AddrData.unconfirmedBalance!)/Math.pow(10,18)).toFixed(18)} ETH`}</td>
+                        </tr>
+                        <tr className="border-b h-[40px]">
+                            <td>No. Transactions</td>
+                            <td>{`${AddrData.unconfirmedTxs!|0}`}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            :
+            <></>
+            }
+
+            <ERC20_Accordion TokenData={tokenData as any} />
+            <ERC721_Accordion TokenData={tokenData as any} />
+            <ERC1155_Accordion TokenData={tokenData as any} />
         </div>
     )
 }

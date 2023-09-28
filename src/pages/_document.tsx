@@ -6,6 +6,7 @@ import { AppConfig } from '@/utils/AppConfig';
 class MyDocument extends Document {
   // eslint-disable-next-line class-methods-use-this
   render() {
+    console.log('doc')
     return (
       <Html lang={AppConfig.locale}>
         <Head />
