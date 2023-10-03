@@ -472,7 +472,6 @@ export const AddressCard = ({AddrData}: {AddrData: any}) => {
         init();
     }, []);
     const tokenData = getTokensFromAddress(AddrData);
-    console.log("tokens", tokenData)
     return (
         <div className="flex flex-col w-full h-full py-2 gap-2">
             <div className="flex flex-col w-full px-[3%] bg-white py-2">

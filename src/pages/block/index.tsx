@@ -18,60 +18,69 @@ interface IParams extends ParsedUrlQuery {
 }
 
 type AppProps = {
-    addrData: any;
-    txSpData: any;
-  };
+    blockData: any;
+};
 
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//     try {
-//       const { slug } = context.params as IParams;
-//       const apiUrl = "https://ethbook.guarda.co/api";
-//       let res = await fetch(`${apiUrl}/v2/address/${slug}?page=1&pageSize=10&secondary=jpy&details=txs`);
-//       const addrData = await res.json();
-//       return { props: { addrData } };
-//     } catch (errorBlog) {
-//       return { notFound: true };
-//     }
-// };
+type TxPageData = {
+    data: any;
+    page: number;
 
-const TransactionPage: NextPage = () => {
+}
+
+const BlockPage: NextPage = () => {
     const router = useRouter();
     const {t} = useTranslation('common');
     const {locale} = router;
     const [searchtext, setSearchText] = useState('');
     const [loading, setLoading] = useState(false);
-    const [props, setProps] = useState<any>(null);
+    const [props, setProps] = useState<AppProps>();
     const [currentPage, setCurrentPage] = useState(1);
+    const [txpageData, setTxPageData] = useState<TxPageData>();
 
-    const fetchData = async(page: number) => {
+    const fetchData = async() => {
         setLoading(true);
-        const slug  = router.query.slug;
         const apiUrl = "https://ethbook.guarda.co/api";
-        let res = await fetch(`${apiUrl}/v2/address/${slug}?page=${page}&pageSize=10&secondary=jpy&details=txs`);
+        let res = await fetch(apiUrl);
         if(!res.ok) {
             throw new Error('HTTP error! status: '+ res.status);
         }
-        const addrData = await res.json();
-        setCurrentPage(addrData.page)
-        setProps({addrData: addrData})
+        const apiData = await res.json();
+
+        const latestBlock = apiData?.blockbook.bestHeight!;
+        res = await fetch(`${apiUrl}/v2/block/${latestBlock}`);
+        if(!res.ok) {
+            throw new Error('HTTP error! status: '+ res.status);
+        }
+        const blockData = await res.json();
+        
+        setCurrentPage(blockData.page)
+        const totalTxs = blockData.txs as [];
+        setTxPageData({data:totalTxs.slice(blockData.page, blockData.page+10), page: blockData.page});
+        // console.log('data=', blockData);
+
+        setProps({blockData})
         setLoading(false);
     }
 
+    const fetchPageData = async(page: number) => {
+        const totalTxs = props?.blockData.txs as [];
+        setTxPageData({data:totalTxs.slice((page-1)*10, (page-1)*10+10), page: page});
+    }
     const changePageHandler = (numPage:number) => {
-        fetchData(numPage).catch((e)=>{
+        fetchPageData(numPage).catch((e)=>{
             console.error('An error occurred while fetching the data: ', e)
-            setProps(null);
+            setProps(undefined);
         });
     }
 
     useEffect(()=>{
-        fetchData(currentPage).catch((e)=>{
+       fetchData().catch((e)=>{
             console.error('An error occurred while fetching the data: ', e)
-            setProps(null);
+            setProps(undefined);
         });
     }, [])
     
-    const balance = (Number(props?.addrData?.balance!) / Math.pow(10,18)).toFixed(18);
+    const balance = (Number(props?.blockData?.balance!) / Math.pow(10,18)).toFixed(18);
 
     return (
         <Main
@@ -83,46 +92,30 @@ const TransactionPage: NextPage = () => {
             {props?
             <div className="flex flex-col items-center justify-center w-full bg-[#ECF0F2] py-4">
                 <div className="flex flex-col w-full min-w-[320px] max-w-[1200px] px-2 gap-4">
-                    {props.addrData.address?
+                    {props.blockData.txs?
                         <>
-                            <div className="flex flex-col w-full pb-12">
-                                <h1 className="text-[32px] font-semibold pb-2">
-                                    {`${props.addrData.contractInfo?('Contract '+props.addrData.contractInfo?.name!+ ' '+(props.addrData.contractInfo?.symbol?'('+props.addrData.contractInfo?.symbol+')':'')):'Address'}`}
-                                </h1>
-                                <span className="text-[20px] break-all">{props.addrData.address}</span>
-                                <div className="flex flex-row w-full justify-between flex-wrap">
-                                    <p className="text-[22px] font-medium">{`${balance} ETH`}</p>
-                                    {
-                                        props.addrData.secondaryValue?
-                                        <p className="text-[22px] font-medium">{`${props.addrData.secondaryValue} JPY`}</p>
-                                        :
-                                        <></>
-                                    }
-                                </div>
-                            </div>
-                            <AddressCard AddrData={props.addrData} />
-                            {props.addrData.totalPages?
+                            {props.blockData.txCount?
                             <div className="flex flex-col w-full pt-6">
                                 <div className="flex flex-row w-full justify-between">
                                     <span className="font-bold test-[22px] text-gray-600">Transactions</span>
                                     <TxPagination 
-                                        TotalSize={Number(props.addrData.txs)} 
+                                        TotalSize={Number(props.blockData.txCount)} 
                                         SizePerPage = {10}
-                                        CurrentPage={Number(props.addrData.page)}
+                                        CurrentPage={Number(txpageData?.page)}
                                         changePageHandler={changePageHandler}
                                     /> 
                                 </div>
                                 <div className="flex flex-col w-full gap-2">
-                                    {props.addrData.transactions?.map((txData: any, idx: number)=>{
+                                    {txpageData?.data?.map((txData: any, idx: number)=>{
                                         const transferData = getTokensTransfersFromTransaction(txData);
                                         return <TransactionCard key={idx} TxData={txData} TokenTransfers={transferData} />
                                     })}
                                 </div>
                                 <div className="flex flex-row w-full justify-end py-2">
                                     <TxPagination 
-                                        TotalSize={Number(props.addrData.txs)} 
+                                        TotalSize={Number(props.blockData.txCount)} 
                                         SizePerPage = {10}
-                                        CurrentPage={Number(props.addrData.page)}
+                                        CurrentPage={Number(txpageData?.page)}
                                         changePageHandler={changePageHandler}
                                     /> 
                                 </div>
@@ -140,4 +133,4 @@ const TransactionPage: NextPage = () => {
     )
 }
 
-export default TransactionPage;
+export default BlockPage;

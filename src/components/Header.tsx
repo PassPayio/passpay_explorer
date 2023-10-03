@@ -18,7 +18,6 @@ import { searchHash } from "@/pages/common/worker";
 const Header = () => {
     const router = useRouter();
     let { locale, locales } = router;
-    console.log('locale=', locale)
     const {t} = useTranslation('common');
     const [userDetails, setUserDetails] = useState(null);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -78,7 +77,6 @@ const Header = () => {
         }
     }
     useEffect(()=>{
-        console.log("basePath", router.route);
         setShowSearchBox(router.route !== '/')
     },[router]);
     return (
@@ -91,9 +89,9 @@ const Header = () => {
                     />
                 </div> 
                     <div className="hidden lg:flex justify-end w-full items-end">
-                        <div className="flex flex-row min-w-[200px] justify-start gap-[3%]">
+                        <div className="flex flex-row min-w-[200px] justify-start gap-[10%]">
                             <HeaderButton name={t('home')} icon={<HiHome />} selected = {router.asPath==="/" || router.asPath==="/"} clickhandler={()=>{router.push('/')}}/>
-                            <HeaderButton name={t('Txs')} icon={<MdPlaylistAddCheckCircle />} selected = {router.asPath==='/plan'} clickhandler={()=>{router.push('/plan')}}/>
+                            <HeaderButton name={t('Txs')} icon={<MdPlaylistAddCheckCircle />} selected = {router.asPath==='/block/'} clickhandler={()=>{router.push('/block')}}/>
                         </div>
                         <div className={`${showsearchbox?'flex':'hidden' } w-full h-[40px] flex-row`}>
                             <form className="flex flex-row w-full" onSubmit={handleSearchSubmit}>

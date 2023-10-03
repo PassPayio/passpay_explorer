@@ -157,7 +157,7 @@ export class TimeSpan {
 export function getTimeSpan(miliseconds: number) {
     const now = Date.now();
     const ts = new TimeSpan(now-miliseconds*1000);
-    
+    console.log('time span', now-miliseconds*1000)
     let timespanTxt = "";
     if(ts.days>0) {
         timespanTxt = `${ts.days} days ${ts.hours} hours ago`;

@@ -40,9 +40,6 @@ const TransactionPage: NextPage = () => {
     const [loading, setLoading] = useState(false);
     const [tokenTransferData, setTokenTransferData] = useState<Map<string, Array<any>>|null>();
     const [props, setProps] = useState<any>();
-    const searchInputChangeHandler = (event: any) => {
-        setSearchText(event.target.value);
-    }
     
     const fetchData = async() => {
         setLoading(true);

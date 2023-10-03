@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="flex flex-col justify-center w-fit h-[100px] ml-[5%]">
           <div className="flex flex-row pb-4 w-full">
             <div className="flex space-x-2 w-full text-sm text-white dark:text-gray-100 text-[14px] justify-between flex-wrap">
-              <div>{`Copyright ${new Date().getFullYear()} PassPay Wallet.`} </div>
+              <div>{`Copyright ${new Date().getFullYear()} PassPay Explorer.`} </div>
             </div>
           </div>
         </div>
