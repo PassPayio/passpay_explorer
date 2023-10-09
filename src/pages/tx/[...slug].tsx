@@ -44,7 +44,7 @@ const TransactionPage: NextPage = () => {
     const fetchData = async() => {
         setLoading(true);
         const slug  = router.query.slug;
-        const apiUrl = "https://ethbook.guarda.co/api";
+        const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
         let res = await fetch(`${apiUrl}/v2/tx/${slug}`);
         if(!res.ok) {
             throw new Error('HTTP error! status: '+ res.status);
@@ -65,6 +65,7 @@ const TransactionPage: NextPage = () => {
         fetchData().catch((e)=>{
             console.error('An error occurred while fetching the data: ', e)
             setProps(null);
+            setLoading(false);
         });
         
         // console.log(props.txData);
@@ -90,11 +91,11 @@ const TransactionPage: NextPage = () => {
                             <TransactionCard TxData={props.txData} TokenTransfers = {tokenTransferData}/>
                             <RawTransactionCard TxData={props.txSpData} />
                         </>
-                    :(  <div>No Transaction Result</div>    )
+                    :(  <div className="w-full text-center pt-12">No Transaction Result</div>    )
                     }
                 </div>
             </div>
-            :<></>}
+            :<div className="w-full text-center pt-12">No Transaction Result</div>  }
         </Main>
     )
 }

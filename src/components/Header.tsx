@@ -11,9 +11,10 @@ import { AiOutlineClose, AiOutlineSearch } from 'react-icons/ai';
 import { MobileNav } from "./MobileNav";
 import { Menu, MenuItem } from '@mui/material';
 import { useOurContext } from "@/context/walletContext";
-import { LanguageSelectDropDown } from "./DropDown";
+import { LanguageSelectDropDown, NetworkSelectDropDown } from "./DropDown";
 import { useTranslation } from '../utils/common';
 import { searchHash } from "@/pages/common/worker";
+import { toast } from 'react-toastify';
 
 const Header = () => {
     const router = useRouter();
@@ -66,7 +67,7 @@ const Header = () => {
 
         setLoading(false);
         if(result===null) {
-            alert("null");
+            toast('No search result.');
             return;
         }
         if(result.type === 0) {
@@ -82,12 +83,16 @@ const Header = () => {
     return (
         <div className="flex flex-col h-fit">
             <div className="flex flex-row items-center h-[98px] bg-white drop-shadow-xl justify-between px-[5%]">
-                <div className="flex pb-[10px] min-w-[200px] w-full max-w-[270px] justify-start">
+                <div className="flex flex-row pb-[10px] min-w-[120px] w-full max-w-[170px] justify-start">
                     <Image
-                        src={`${router.basePath}/assets/images/logo.webp`} width={170} height={40}
+                        src={`${router.basePath}/assets/images/explorer_logo.png`} width={170} height={40}
                         alt={'logo'}
                     />
                 </div> 
+                <div className="flex w-[100px] pr-4 mr-4">
+                    <NetworkSelectDropDown onChangeHandler={()=>{}} checkedValue={`${Number(process.env.NEXT_PUBLIC_EXPLORER_TYPE) === 1?'ethereum':'polygon'}`}/>
+                </div>
+
                     <div className="hidden lg:flex justify-end w-full items-end">
                         <div className="flex flex-row min-w-[200px] justify-start gap-[10%]">
                             <HeaderButton name={t('home')} icon={<HiHome />} selected = {router.asPath==="/" || router.asPath==="/"} clickhandler={()=>{router.push('/')}}/>

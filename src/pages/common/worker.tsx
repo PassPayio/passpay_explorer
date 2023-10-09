@@ -4,7 +4,7 @@ const woker=()=>{
     <></>
 }
 export async function searchHash(hash: String) {
-    const apiUrl = "https://ethbook.guarda.co/api";
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
     const txUrl = apiUrl + "/v2/tx/"+hash;
     console.log(txUrl);
     const txResult = await axios.get(txUrl)

@@ -10,6 +10,8 @@ import Footer from '@/components/Footer';
 import SectionContainer from '@/components/SectionContainer';
 import Header from '@/components/Header';
 import CookieBanner from '@/components/CookieBanner';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type IMainProps = {
   meta: ReactNode;
@@ -87,6 +89,8 @@ const Main = (props: IMainProps) => {
         </motion.main>
         <Footer />
         <CookieBanner />
+        <ToastContainer />
+
       </div>
     </SectionContainer>
   );

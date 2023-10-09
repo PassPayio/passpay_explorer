@@ -46,7 +46,8 @@ const TransactionPage: NextPage = () => {
     const fetchData = async(page: number) => {
         setLoading(true);
         const slug  = router.query.slug;
-        const apiUrl = "https://ethbook.guarda.co/api";
+        const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
+        console.log(apiUrl);
         let res = await fetch(`${apiUrl}/v2/address/${slug}?page=${page}&pageSize=10&secondary=jpy&details=txs`);
         if(!res.ok) {
             throw new Error('HTTP error! status: '+ res.status);
@@ -61,6 +62,7 @@ const TransactionPage: NextPage = () => {
         fetchData(numPage).catch((e)=>{
             console.error('An error occurred while fetching the data: ', e)
             setProps(null);
+            setLoading(false);
         });
     }
 
@@ -68,6 +70,7 @@ const TransactionPage: NextPage = () => {
         fetchData(currentPage).catch((e)=>{
             console.error('An error occurred while fetching the data: ', e)
             setProps(null);
+            setLoading(false);
         });
     }, [])
     
@@ -130,11 +133,11 @@ const TransactionPage: NextPage = () => {
                             : <></>
                             }  
                         </>
-                    :(  <div>No Address Result</div>    )
+                    :(  <div className="w-full text-center pt-12">No Address Result</div>    )
                     }
                 </div>
             </div>
-            :<></>
+            :<div className="w-full text-center pt-12">No Address Result</div>
             }
         </Main>
     )

@@ -39,7 +39,7 @@ const BlockPage: NextPage = () => {
 
     const fetchData = async() => {
         setLoading(true);
-        const apiUrl = "https://ethbook.guarda.co/api";
+        const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
         let res = await fetch(apiUrl);
         if(!res.ok) {
             throw new Error('HTTP error! status: '+ res.status);

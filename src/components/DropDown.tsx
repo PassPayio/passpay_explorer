@@ -78,7 +78,7 @@ export const NetworkSelectDropDown = (Props: {onChangeHandler: any, checkedValue
     const wrapperRef = useRef(null);
     const [menushow, setMenuShow] = useState(false);
     const menuItems = [
-        "polygon", "binance"
+        "polygon", "ethereum"
     ]
 
     useOutsideAlerter(wrapperRef, setMenuShow);
@@ -88,14 +88,14 @@ export const NetworkSelectDropDown = (Props: {onChangeHandler: any, checkedValue
         <div className='flex flex-col w-full relative' ref={wrapperRef}>
             <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" 
                 className="text-white text-[20px] bg-[#1d67cd] hover:bg-blue-900 border-b border-blue-500
-                        font-medium text-sm px-5 py-2.5 text-center inline-flex items-center h-[60px]
+                        font-medium text-sm px-2 py-2.5 text-center inline-flex items-center h-[40px]
                         flex-row justify-between" 
                 type="button"
                 onClick={()=>{setMenuShow(!menushow)}}
             >
                 <div className='w-full flex justify-center'>
                     {selectedValue==='polygon'?(
-                        <svg className='w-[40px] h-[40px]' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" fill="#ffffff"
+                        <svg className='w-[30px] h-[30px]' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" fill="#ffffff"
                                 viewBox="0 0 38.4 33.5">
                         <g>
                             <path d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3
@@ -107,13 +107,13 @@ export const NetworkSelectDropDown = (Props: {onChangeHandler: any, checkedValue
                         </g>
                         </svg>
                     ):(
-                        <svg className='w-[40px] h-[40px]' fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15.986 1.019l9.189 9.159-3.396 3.393-5.793-5.793-5.793 5.823-3.396-3.393 9.189-9.189zM4.399 12.605l3.365 3.395-3.363 3.365-3.396-3.365zM15.986 12.607l3.394 3.363-3.395 3.395-3.395-3.365 3.395-3.393zM27.572 12.605l3.423 3.395-3.393 3.395-3.395-3.395zM21.778 18.399l3.396 3.393-9.189 9.189-9.189-9.187 3.396-3.395 5.793 5.823 5.793-5.823z"></path>
+                        <svg className='w-[30px] h-[30px]' fill="#ffffff" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.927 23.959l-9.823-5.797 9.817 13.839 9.828-13.839-9.828 5.797zM16.073 0l-9.819 16.297 9.819 5.807 9.823-5.801z"/>
                         </svg>
                     )}
                     
                 </div>
-                <svg className='w-[40px] h-[40px]' viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                <svg className='w-[30px] h-[30px]' viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
                     transform={`${menushow ? 'matrix(1, 0, 0, -1, 0, 0)' : ''}`}
                 >
                     <g id="out" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -123,22 +123,22 @@ export const NetworkSelectDropDown = (Props: {onChangeHandler: any, checkedValue
                 </svg>
             </button>
             <div id="dropdown" 
-                className={`${menushow?'':'hidden'} z-10 top-[60px] absolute w-full bg-[#1d67cd]`}
+                className={`${menushow?'':'hidden'} z-10 top-[40px] absolute w-full bg-[#1d67cd]`}
             >
                 <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" 
                     className="text-white text-[20px] bg-[#1d67cd] hover:bg-blue-900 w-full
-                            font-medium text-sm px-5 py-2.5 text-center inline-flex items-center h-[60px]
+                            font-medium text-sm px-5 py-2.5 text-center inline-flex items-center h-[40px]
                             flex-row justify-between" 
                     type="button"
                     onClick={()=>{
-                        setSelected(selectedValue==='polygon'?'binance':'polygon');
+                        setSelected(selectedValue==='polygon'?'ethereum':'polygon');
                         setMenuShow(false);
-                        Props.onChangeHandler(selectedValue==='polygon'?'binance':'polygon');
+                        Props.onChangeHandler(selectedValue==='polygon'?'ethereum':'polygon');
                     }}
                 >
                     <div className='w-full flex justify-center'>
                         {selectedValue!=='polygon'?(
-                            <svg className='w-[40px] h-[40px]' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" fill="#ffffff"
+                            <svg className='w-[30px] h-[30px]' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" fill="#ffffff"
                                     viewBox="0 0 38.4 33.5">
                             <g>
                                 <path d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3
@@ -150,8 +150,8 @@ export const NetworkSelectDropDown = (Props: {onChangeHandler: any, checkedValue
                             </g>
                             </svg>
                         ):(
-                            <svg className='w-[40px] h-[40px]' fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M15.986 1.019l9.189 9.159-3.396 3.393-5.793-5.793-5.793 5.823-3.396-3.393 9.189-9.189zM4.399 12.605l3.365 3.395-3.363 3.365-3.396-3.365zM15.986 12.607l3.394 3.363-3.395 3.395-3.395-3.365 3.395-3.393zM27.572 12.605l3.423 3.395-3.393 3.395-3.395-3.395zM21.778 18.399l3.396 3.393-9.189 9.189-9.189-9.187 3.396-3.395 5.793 5.823 5.793-5.823z"></path>
+                            <svg className='w-[30px] h-[30px]' fill="#ffffff" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15.927 23.959l-9.823-5.797 9.817 13.839 9.828-13.839-9.828 5.797zM16.073 0l-9.819 16.297 9.819 5.807 9.823-5.801z"/>
                             </svg>
                         )}
                         
