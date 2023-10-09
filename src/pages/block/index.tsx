@@ -13,6 +13,7 @@ import {
     Collapse,
     initTE,
   } from "tw-elements";
+import { delay } from "@/lib/utils";
 interface IParams extends ParsedUrlQuery {
     slug: string;
 }
@@ -47,6 +48,9 @@ const BlockPage: NextPage = () => {
         const apiData = await res.json();
 
         const latestBlock = apiData?.blockbook.bestHeight!;
+        
+        await delay(3000); // must delete when using our api
+        
         res = await fetch(`${apiUrl}/v2/block/${latestBlock}`);
         if(!res.ok) {
             throw new Error('HTTP error! status: '+ res.status);
@@ -77,6 +81,7 @@ const BlockPage: NextPage = () => {
        fetchData().catch((e)=>{
             console.error('An error occurred while fetching the data: ', e)
             setProps(undefined);
+            setLoading(false);
         });
     }, [])
     
@@ -123,11 +128,11 @@ const BlockPage: NextPage = () => {
                             : <></>
                             }  
                         </>
-                    :(  <div>No Address Result</div>    )
+                    :(  <div>No Block Result</div>    )
                     }
                 </div>
             </div>
-            :<></>
+            :<div className="w-full text-center pt-12">No Block Result</div>
             }
         </Main>
     )

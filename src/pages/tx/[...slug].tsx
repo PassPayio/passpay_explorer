@@ -8,6 +8,8 @@ import { useState } from "react";
 import {useEffect} from 'react';
 import { RawTransactionCard, TransactionCard } from "@/components/Cards";
 import { getTokensTransfersFromTransaction } from '../common/worker';
+import https from "https";
+import { delay } from "@/lib/utils";
 
 interface IParams extends ParsedUrlQuery {
     slug: string;
@@ -45,11 +47,14 @@ const TransactionPage: NextPage = () => {
         setLoading(true);
         const slug  = router.query.slug;
         const apiUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL;
+        console.log('xxxx',apiUrl)
+
         let res = await fetch(`${apiUrl}/v2/tx/${slug}`);
         if(!res.ok) {
             throw new Error('HTTP error! status: '+ res.status);
         }
         const txData = await res.json();
+        await delay(3000);
         res = await fetch(`${apiUrl}/v2/tx-specific/${slug}`)
         if(!res.ok) {
             throw new Error('HTTP error! status: '+ res.status);
