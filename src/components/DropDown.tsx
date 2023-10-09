@@ -83,7 +83,7 @@ export const NetworkSelectDropDown = (Props: {onChangeHandler: any, checkedValue
 
     useOutsideAlerter(wrapperRef, setMenuShow);
 
-    const [selectedValue, setSelected] = useState("polygon");
+    const [selectedValue, setSelected] = useState(Props.checkedValue);
     return (
         <div className='flex flex-col w-full relative' ref={wrapperRef}>
             <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" 

@@ -77,6 +77,16 @@ const Header = () => {
             router.push("/address/"+searchtext);
         }
     }
+
+    const handleSwitchExplorer = async(data: string) => {
+        if (data === "ethereum") {
+            window.location.href = "https://etherbook.passpay.io";
+        }
+        else if (data === "polygon") {
+            window.location.href = "https://maticbook.passpay.io";
+        }
+    }
+
     useEffect(()=>{
         setShowSearchBox(router.route !== '/')
     },[router]);
@@ -90,7 +100,7 @@ const Header = () => {
                     />
                 </div> 
                 <div className="flex w-[100px] pr-4 mr-4">
-                    <NetworkSelectDropDown onChangeHandler={()=>{}} checkedValue={`${Number(process.env.NEXT_PUBLIC_EXPLORER_TYPE) === 1?'ethereum':'polygon'}`}/>
+                    <NetworkSelectDropDown onChangeHandler={handleSwitchExplorer} checkedValue={`${Number(process.env.NEXT_PUBLIC_EXPLORER_TYPE) === 1?'ethereum':'polygon'}`}/>
                 </div>
 
                     <div className="hidden lg:flex justify-end w-full items-end">
