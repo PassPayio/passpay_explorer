@@ -116,7 +116,7 @@ export const NetworkSelectDropDown = (Props: {onChangeHandler: any, checkedValue
                 <svg className='w-[30px] h-[30px]' viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
                     transform={`${menushow ? 'matrix(1, 0, 0, -1, 0, 0)' : ''}`}
                 >
-                    <g id="out" stroke="none" stroke-width="1" fill="none" fillRule="evenodd">
+                    <g id="out" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                         <path d="M4,7 L9,13 L14,7 L4,7 L4,7 Z" id="path" fill="#aaaaaa">
                         </path>
                     </g>

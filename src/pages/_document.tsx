@@ -8,7 +8,14 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang={AppConfig.locale}>
-        <Head />
+        <Head>
+        {/* <script 
+          data-ad-client="ca-pub-3207293807232248"
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3207293807232248" 
+          crossOrigin="anonymous">
+        </script> */}
+        </Head>
         <body style={{ overflow: 'initial' }}>
           <Main />
           <NextScript />
